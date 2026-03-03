@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Thời Khóa Biểu</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+<style>
+body{
+    margin:0;
+    font-family: Arial, sans-serif;
+    background:#f4f6f9;
+}
+
+.layout{
+    display:flex;
+}
+
+/* SIDEBAR */
+.sidebar{
+    width:260px;
+    background:#f7f9fb;
+    border-right:1px solid #ddd;
+    height:100vh;
+    overflow:auto;
+    display:flex;
+    flex-direction:column;
+}
+
+.sidebar a{
+    display:block;
+    padding:14px 18px;
+    color:#2f80c0;
+    text-decoration:none;
+    border-bottom:1px solid #e3e6ea;
+    font-size:15px;
+}
+
+.sidebar a:hover{
+    background:#e8f1fb;
+}
+
+.sidebar .active{
+    background:#cfe2f3;
+    font-weight:bold;
+}
+
+/* LOGO DƯỚI SIDEBAR */
+.sidebar-footer{
+    margin-top:auto;
+    text-align:center;
+    padding:20px 10px;
+}
+
+.sidebar-footer img{
+    width:120px;
+    height:auto;
+    margin-bottom:10px;
+}
+
+.sidebar-footer .version{
+    font-size:12px;
+    color:#666;
+    line-height:1.6;
+}
+
+.sidebar-footer a{
+    color:#2f80c0;
+    text-decoration:none;
+}
+
+/* MAIN CONTENT */
+.main-content{
+    flex:1;
+}
+
+.top-title{
+    background:white;
+    padding:15px 20px;
+    border-bottom:1px solid #ddd;
+    font-size:20px;
+    font-weight:bold;
+    color:#2f80c0;
+}
+
+.filter-bar{
+    background:white;
+    padding:15px 20px;
+    border-bottom:1px solid #ddd;
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+    align-items:center;
+}
+
+.filter-bar select{
+    padding:8px 12px;
+    border-radius:6px;
+    border:1px solid #ccc;
+    min-width:220px;
+}
+
+.print-btn{
+    padding:8px 16px;
+    border:1px solid #2f80c0;
+    background:white;
+    color:#2f80c0;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.print-btn:hover{
+    background:#2f80c0;
+    color:white;
+}
+
+.schedule-wrapper{
+    overflow:auto;
+    
+    
+}
+
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+table td,
+table th{
+    border:1px solid #cfcfcf;
+    padding:0;
+    position:relative;
+
+}
+
+th, td{
+    border:1px solid #ddd;
+    text-align:center;
+    font-size:13px;
+    height:40px;
+    position:relative;
+}
+
+thead th{
+    background:#f1f3f6;
+}
+
+.period{
+    background:#2f80c0;
+    color:white;
+    width:80px;
+    font-weight:bold;
+}
+
+.time-col{
+    background:linear-gradient(to bottom,#3ea0db,#2f80c0);
+    color:white;
+    width:90px;
+    font-weight:500;
+}
+
+.subject{
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+
+    background:#add0f5;
+    border:1px solid #0492ff;
+    border-radius:0;
+
+    padding:10px;
+
+    text-align:left;      /* 👈 canh trái */
+    display:flex;         /* 👇 ép nội dung dồn trái trên */
+    flex-direction:column;
+    justify-content:flex-start;
+    align-items:flex-start;
+}
+
+.subject b{
+    display:block;
+    margin-bottom:4px;
+}
+.ngay{
+    color:#9e9e9e;   /* đây là màu xám */
+}
+.nav-arrow{
+    cursor:pointer;
+    color:#2f80c0;
+    font-size:14px;
+    margin:0 6px;
+}
+
+.nav-arrow:hover{
+    color:#1b5f99;
+}
+
+.th-left{
+    text-align:left;
+}
+
+.th-right{
+    text-align:right;
+}
+.schedule-wrapper{
+    overflow:auto;
+    position:relative;
+}
+
+.week-arrow{
+    position:absolute;
+    top:12px;
+    width:32px;
+    height:32px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:white;
+    border-radius:50%;
+    cursor:pointer;
+    box-shadow:0 2px 6px rgba(0,0,0,0.15);
+    color:#2f80c0;
+    z-index:10;
+}
+
+.week-arrow.left{
+    left:-16px;
+}
+
+.week-arrow.right{
+    right:-16px;
+}
+.study-progress{
+    margin-top:30px;
+    background:white;
+    border-radius:10px;
+    padding:20px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* header */
+.progress-header{
+    font-weight:600;
+    color:#2f80c0;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:20px;
+}
+
+/* progress line */
+.semester-progress{
+    position:relative;
+    margin:30px auto 40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    max-width:900px;   /* thêm dòng này */
+}
+
+.semester-progress .line{
+    position:absolute;
+    top:12px;
+    left:0;
+    right:0;
+    height:4px;
+    background:#2f80c0;
+    z-index:0;
+}
+
+.dot{
+    position:relative;
+    width:20px;
+    height:20px;
+    border-radius:50%;
+    background:#1abc9c;
+    z-index:1;
+}
+
+.dot span{
+    position:absolute;
+    top:30px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:13px;
+    white-space:nowrap;   /* 🔥 thêm dòng này */
+}
+
+.dot.active{
+    background:#2f80c0;
+    box-shadow:0 0 0 4px rgba(47,128,192,0.2);
+}
+
+/* calendar */
+.calendar-box{
+    margin-top:30px;
+    max-width:900px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.calendar-header{
+    font-size:20px;
+    margin-bottom:20px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:25px;
+    font-weight: normal;   /* đổi 600 thành normal */
+}
+
+.calendar-header i{
+    font-size:22px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+}
+
+#monthTitle{
+    line-height:1;
+}
+
+.calendar-grid{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:20px;
+    text-align:center;
+}
+
+.day-name{
+    font-weight:600;
+}
+
+.sunday{
+    color:red;
+}
+
+.day{
+    padding:10px 0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+}
+
+.active-day{
+    background:#4caf50;
+    color:white;
+    border-radius:50%;
+    width:40px;
+    height:40px;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+.green-dot{
+    width:6px;
+    height:6px;
+    background:#4caf50;
+    border-radius:50%;
+    margin:4px auto 0;
+}
+</style>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <a href="index.html">🏠 Trang chủ</a>
+<a href="thongbao.html">Thông báo từ ban quản trị</a>
+<a href="chuongtrinhdaotao.html">Xem chương trình đào tạo</a>
+<a href="monhoctienquyet.html">Xem môn học tiên quyết</a>
+<a href="dangky.html">Đăng ký môn học</a>
+<a href="dangkynguyenvong.html">Đăng ký môn nguyện vọng</a>
+<a href="hocphi.html">Xem học phí</a>
+<a href="thoikhoabieu.html" class="active">Thời khóa biểu dạng tuần</a>
+<a href="thoikhoabieuhk.html">Thời khóa biểu dạng học kỳ</a>
+<a href="diemdanh.html">Xem kết quả điểm danh</a>
+<a href="lichthi.html">Xem lịch thi</a>
+<a href="xemdiem.html">Xem điểm</a>
+<a href="renluyen.html">Đánh giá kết quả rèn luyện</a>
+<a href="khaosat.html">Khảo sát đánh giá</a>
+
+        <!-- Logo + Version -->
+        <div class="sidebar-footer">
+            <img src="d:\logo1.jpg" alt="Logo KTBD">
+            <div class="version">
+                KKBD-V 2025.12J.03<br>
+                Design by <a href="#">aqtech.vn</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+
+        <div class="top-title">
+            <i class="fa-solid fa-gear"></i> THỜI KHÓA BIỂU DẠNG TUẦN
+        </div>
+
+        <div class="filter-bar">
+            <select>
+                <option>Học kỳ 2 - Năm học 2025 - 2026</option>
+            </select>
+
+            <select>
+                <option>Thời khóa biểu cá nhân</option>
+            </select>
+
+            <select id="weekSelect" onchange="loadWeek()">
+              
+                <option value="27">Tuần 27 02/03/2026 - 08/03/2026</option>
+                <option value="28">Tuần 28 09/03/2026 - 15/03/2026</option>
+                <option value="29">Tuần 29 16/03/2026 - 22/03/2026</option>
+                <option value="30">Tuần 30 23/03/2026 - 29/03/2026</option>
+                
+            </select>
+
+            <button class="print-btn" onclick="window.print()">
+                <i class="fa fa-print"></i> In
+            </button>
+        </div>
+
+        <div class="schedule-wrapper">
+            
+            <table>
+                <thead>
+<tr>
+    <th class="period"></th>
+
+    <th class="th-left">
+        <i class="fa-solid fa-chevron-left nav-arrow" onclick="prevWeek()"></i>
+        Thứ 2 <span class="ngay"></span>
+    </th>
+
+    <th>Thứ 3 <span class="ngay"></span></th>
+    <th>Thứ 4 <span class="ngay"></span></th>
+    <th>Thứ 5 <span class="ngay"></span></th>
+    <th>Thứ 6 <span class="ngay"></span></th>
+    <th>Thứ 7 <span class="ngay"></span></th>
+
+    <th class="th-right">
+        Chủ Nhật <span class="ngay"></span>
+        <i class="fa-solid fa-chevron-right nav-arrow" onclick="nextWeek()"></i>
+    </th>
+
+    <th class="time-col"></th>
+</tr>
+</thead>
+                <tbody><tfoot>
+<tr id="timeRow">
+    <td class="period"></td>
+
+    <td colspan="7"></td>
+
+    <td class="time-col"></td>
+</tr>
+</tfoot></tbody>
+            </table>
+        </div>
+<!-- TIẾN TRÌNH HỌC TẬP -->
+<div class="study-progress">
+
+    <div class="progress-header">
+        <i class="fa-solid fa-gear"></i>
+        <span>TIẾN TRÌNH HỌC TẬP</span>
+    </div>
+
+    <div class="semester-progress">
+
+        <div class="line"></div>
+
+        <div class="dot done"><span>HK 1-2024</span></div>
+<div class="dot done"><span>HK 2-2024</span></div>
+<div class="dot done"><span>HK 3-2024</span></div>
+<div class="dot done"><span>HK 1-2025</span></div>
+<div class="dot active"><span>HK 2-2025</span></div>
+        
+    </div>
+<!-- CALENDAR -->
+<div class="calendar-box">
+    <div class="calendar-header">
+        <i class="fa-solid fa-chevron-left" onclick="prevMonth()"></i>
+        <span id="monthTitle"></span>
+        <i class="fa-solid fa-chevron-right" onclick="nextMonth()"></i>
+    </div>
+
+    <div class="calendar-grid" id="calendarGrid">
+        <div class="day-name">T2</div>
+        <div class="day-name">T3</div>
+        <div class="day-name">T4</div>
+        <div class="day-name">T5</div>
+        <div class="day-name">T6</div>
+        <div class="day-name">T7</div>
+        <div class="day-name sunday">CN</div>
+    </div>
+</div>
+</div>
+    </div>
+
+</div>
+
+
+<script>
+const times = [
+"07:00","07:50","08:40","09:35",
+"10:25","11:15","12:30","13:20",
+"14:10","15:05","15:55","16:45",
+"17:40","18:30","19:20","20:10"
+];
+
+const weekData = {
+
+27:{
+dates:["02/03","03/03","04/03","05/03","06/03","07/03","08/03"],
+subjects:getSubjects()
+},
+
+28:{
+dates:["09/03","10/03","11/03","12/03","13/03","14/03","15/03"],
+subjects:getSubjects()
+},
+
+29:{
+dates:["16/03","17/03","18/03","19/03","20/03","21/03","22/03"],
+subjects:getSubjects()
+},
+
+30:{
+dates:["23/03","24/03","25/03","26/03","27/03","28/03","29/03"],
+subjects:getSubjects()
+}
+
+};
+
+function getSubjects(){
+return [
+
+{day:4,start:0,length:5,
+ name:"Quản trị chuỗi cung ứng (622101)",
+ nhom:"03",
+ room:"K211 - Phòng LT K211",
+ gv:"Nguyễn Thị Hồng",
+ time:"07:00 - 11:15"},
+
+{day:5,start:0,length:5,
+ name:"Quản trị hệ thống thông tin (622162)",
+ nhom:"03",
+ room:"K214 - Phòng LT K214",
+ gv:"Nguyễn Kiều Oanh",
+ time:"07:00 - 11:15"},
+
+{day:5,start:11,length:4,
+ name:"Tiếng Anh 4 (622014)",
+ nhom:"18",
+ room:"K113 - Phòng LT K113",
+ gv:"Nguyễn Đình Minh Thắng",
+ time:"16:45 - 19:20"},
+
+{day:2,start:6,length:5,
+ name:"Tiếng Anh 4 (622014)",
+ nhom:"18",
+ room:"K113 - Phòng LT K113",
+ gv:"Nguyễn Đình Minh Thắng",
+ time:"12:30 - 16:45"},
+
+{day:3,start:6,length:5,
+ name:"Luật kinh tế (041061)",
+ nhom:"07",
+ room:"K214 - Phòng LT K214",
+ gv:"Đỗ Hương Giang",
+ time:"12:30 - 16:45"}
+
+];
+}
+
+function loadWeek(){
+const week=document.getElementById("weekSelect").value;
+const tbody=document.querySelector("tbody");
+tbody.innerHTML="";
+updateHeaderDates(weekData[week].dates);
+
+for(let i=0;i<16;i++){
+let row=document.createElement("tr");
+let period=document.createElement("td");
+period.className="period";
+period.innerText="Tiết "+(i+1);
+row.appendChild(period);
+
+for(let d=1;d<=7;d++){
+let subject=weekData[week].subjects.find(s=>s.day==d&&s.start==i);
+if(subject){
+let td=document.createElement("td");
+td.rowSpan=subject.length;
+
+td.innerHTML=`
+<div class="subject">
+<b>${subject.name}</b>
+Nhóm: ${subject.nhom}<br>
+Phòng: ${subject.room}<br>
+GV: ${subject.gv}<br>
+${subject.time}
+</div>`;
+
+
+row.appendChild(td);
+}else{
+let skip=weekData[week].subjects.find(s=>s.day==d&&i>s.start&&i<s.start+s.length);
+if(!skip) row.appendChild(document.createElement("td"));
+}
+}
+
+let time=document.createElement("td");
+time.className="time-col";
+time.innerText=times[i];
+row.appendChild(time);
+tbody.appendChild(row);
+}
+}
+
+function updateHeaderDates(dates){
+const spans=document.querySelectorAll("thead span");
+spans.forEach((s,i)=>s.innerText=dates[i]);
+}
+
+loadWeek();
+const timeRow = document.getElementById("timeRow");
+timeRow.innerHTML = "<td class='period'></td>";
+
+for(let d=1; d<=7; d++){
+    timeRow.innerHTML += "<td></td>";
+}
+
+timeRow.innerHTML += "<td class='time-col'></td>";
+let currentWeek = 27;
+
+function prevWeek(){
+    if(currentWeek > 27){
+        currentWeek--;
+        document.getElementById("weekSelect").value = currentWeek;
+        loadWeek();
+    }
+}
+
+function nextWeek(){
+    if(currentWeek < 30){
+        currentWeek++;
+        document.getElementById("weekSelect").value = currentWeek;
+        loadWeek();
+    }
+}
+// ===== CALENDAR =====
+
+let currentMonth = 2; // Tháng 3 (0 = tháng 1)
+let currentYear = 2026;
+
+function renderCalendar(){
+    const monthTitle = document.getElementById("monthTitle");
+    const grid = document.getElementById("calendarGrid");
+
+    const months = [
+        "Tháng 1","Tháng 2","Tháng 3","Tháng 4",
+        "Tháng 5","Tháng 6","Tháng 7","Tháng 8",
+        "Tháng 9","Tháng 10","Tháng 11","Tháng 12"
+    ];
+
+    monthTitle.innerText = months[currentMonth] + " " + currentYear;
+
+    // Reset grid (giữ header thứ)
+    grid.innerHTML = `
+        <div class="day-name">T2</div>
+        <div class="day-name">T3</div>
+        <div class="day-name">T4</div>
+        <div class="day-name">T5</div>
+        <div class="day-name">T6</div>
+        <div class="day-name">T7</div>
+        <div class="day-name sunday">CN</div>
+    `;
+
+    let firstDay = new Date(currentYear, currentMonth, 1).getDay();
+    firstDay = firstDay === 0 ? 6 : firstDay - 1;
+
+    let daysInMonth = new Date(currentYear, currentMonth+1, 0).getDate();
+
+    for(let i=0;i<firstDay;i++){
+        grid.innerHTML += `<div></div>`;
+    }
+
+    for(let d=1; d<=daysInMonth; d++){
+    let dateObj = new Date(currentYear,currentMonth,d);
+    let sunday = dateObj.getDay() === 0;
+
+    let hasEvent = d === 3; // test ngày 3 có chấm xanh
+
+    grid.innerHTML += `
+        <div class="day ${sunday ? 'sunday':''}">
+            <div>${d}</div>
+            ${hasEvent ? '<div class="green-dot"></div>' : ''}
+        </div>
+    `;
+}
+}
+
+function prevMonth(){
+    currentMonth--;
+    if(currentMonth < 0){
+        currentMonth = 11;
+        currentYear--;
+    }
+    renderCalendar();
+}
+
+function nextMonth(){
+    currentMonth++;
+    if(currentMonth > 11){
+        currentMonth = 0;
+        currentYear++;
+    }
+    renderCalendar();
+}
+
+renderCalendar();
+</script>
+
+
+</body>
+</html>
